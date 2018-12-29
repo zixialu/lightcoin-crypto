@@ -20,10 +20,16 @@ class Transaction {
   }
 
   commit() {
-    // Keep track of the time of the transaction
-    this.time = new Date();
-    // Add the transaction to the account
-    this.account.addTransaction(this);
+    if (this.isAllowed) {
+      // Keep track of the time of the transaction
+      this.time = new Date();
+      // Add the transaction to the account
+      this.account.addTransaction(this);
+
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -31,11 +37,19 @@ class Withdrawal extends Transaction {
   get value() {
     return -this.amount;
   }
+
+  get isAllowed() {
+    return this.account.balance + this.value >= 0;
+  }
 }
 
 class Deposit extends Transaction {
   get value() {
     return this.amount;
+  }
+
+  get isAllowed() {
+    return true;
   }
 }
 
